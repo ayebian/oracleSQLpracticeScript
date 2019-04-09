@@ -273,6 +273,6 @@ SELECT employee_id, first_name, last_name,salary, department_id
 FROM EMPLOYEES
 where FIRST_NAME = '&&EMPLOYEE_NAME';
 
-SET DEFINe off
+SET DEFINE off
 SELECT * FROM DEPARTMENTS
 WHERE DEPARTMENT_NAME LIKE '%&t';
