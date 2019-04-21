@@ -23,7 +23,7 @@ SELECT *
 FROM EMPLOYEES
 WHERE SALARY iN (10000, 2000)
 ORDER BY FIRST_NAME;
-
+       
 --LIKE operator (%- zero or more characters, _ (underscore means one character))
 
 /*SELECT * FROM EMPLOYEES
@@ -120,7 +120,7 @@ FETCH FIRST 5 ROWS ONLY;
 SELECT EMPLOYEE_ID, FIRST_NAME,LAST_NAME
 FROM EMPLOYEES
 ORDER BY EMPLOYEE_ID
-FETCH FIRST 50 PERCENT ROWS ONLY;
+FETCH FIRST 50 PERCENT ROWS ONLY; 
 
 Using offset that is when u want to fetch but start from a given row.
 it comes before fetch clause
@@ -219,6 +219,186 @@ SET DEFINE OFF
 SELECT * FROM DEPARTMENTS
 WHERE DEPARTMENT_NAME LIKE '%&t';
 */
+/*
+--Character functions
+
+--Upper()/ Lower() / Initcap()
+
+SELECT employee_id, upper(first_name),lower(first_name), initcap(first_name)
+FROM EMPLOYEES
+WHERE upper(first_name) = upper('patrick')
+Order by upper(first_name);
+*/
+/*
+--Character Manipulation functions
+--Concat, substr, length
+
+Concat function -- Takes only two arguments -- || is more flexible as it takes more than two arguments
+
+SELECT employee_id, concat(first_name,last_name)
+FROM EMPLOYEES;
+
+-- substr function
+
+substr(column or expression, m,n)
+m  is starting position
+n is the characters long 
+
+SELECT employee_id,first_name, substr(first_name,1,3),
+substr(first_name,2,4),
+substr(first_name,2) ,--if u dnt specifify the n, it counts to the last value
+substr(first_name,-3) --if m is negative, it counts from the end.
+FROM EMPLOYEES;
+
+--Length function
+
+SELECT employee_id,length(first_name),first_name, substr(first_name,1,3),
+substr(first_name,2,4),
+substr(first_name,2) ,--if u dnt specifify the n, it counts to the last value
+substr(first_name,-3) --if m is negative, it counts from the end.
+FROM EMPLOYEES;
+
+instr (instring)
+
+--instr (column/expression ,m,n)
+--m is the start searching position
+--n is occurance
+--default m is 1
+--default n is 1
+Returns the numeric position of the named string
+
+SELECT employee_id,first_name,
+instr(first_name,'E'),
+instr(first_name,'e',2), --starts from 2nd position but returns the position of e from the start of the string not from second position
+instr(first_name,'e',5), --starts from 5th position but returns the position of e from the start of the string not from second position
+instr(first_name,'e',5,2) --starts from 1st position but returns the position of the SECOND e from the start of the string not from second position
+instr(first_name,'zabe',3,1)-- String can be more than one character
+FROM EMPLOYEES
+WHERE FIRST_NAME = 'Nanette';
+
+-LPAP, RPAD, TRIM, REPLACE
+--lPAD -- Returns an expression left-padded to length n characters of a character expression
+--rPAD -- Returns an expression left-padded to length n characters of a character expression
+
+SELECT EMPLOYEE_ID, FIRST_NAME, SALARY, LPAD (SALARY,10,'#'), RPAD(salary,10,'*')
+FROM EMPLOYEES;
+
+--REPLACE --finds character(s) and replaces them with the specified character
+
+SELECT EMPLOYEE_ID, FIRST_NAME, REPLACE(FIRST_NAME,'a', '*'), REPLACE (FIRST_NAME, 'en','#')
+FROM EMPLOYEES;
+*/
+/*
+--DUAL TABLE -- dummy table
+--Used to test expressions or functions
+--contains only one column an one row
+ SELECT 3+5 FROM DUAL;
+*/
+
+/*
+--TRIM FUNCTION
+SELECT TRIM (' ' FROM ' Ayebare Ian ') trimmed from DUAL; -- if leading or trailing is not specified, the function trims from both both ends
+
+--Leading
+SELECT TRIM (leading ' ' FROM ' Ayebare Ian ') trimmed from DUAL; -- trims only from the start of the string
+
+TRAILING
+SELECT TRIM (TRAILING ' ' FROM ' Ayebare Ian ') trimmed from DUAL; -- trims only from the end of the string
+*/
+
+
+/* Number /Numeric Functions
+ROUND(Column/expression) -- Rounds off
+TRUNC(Column/expression ) -- Truncates
+MOD(colum/expression) -- Returns modulus / remainder of a division
+
+--Round
+
+SELECT ROUND(10.56) FROM DUAL; --Rounds off to the whole number (no decimal place) when no decimal size is specified
+SELECT ROUND(10.56,1) FROM DUAL; --Rounds off to one decimal place.
+SELECT ROUND(10.5634,2) FROM DUAL; --Rounds off to two decimal places.
+SELECT ROUND(19.5634,-1) FROM DUAL; --Rounds off the first number on the left of the decimal point ie 9 is rounded makeking the answer 20 
+SELECT ROUND(555.493,-2) FROM DUAL; --Evaluates to 600.
+SELECT ROUND(470.92,-3) FROM DUAL; --Evaluates to 0 since 4 is less than 5.
+
+TRUNC
+
+SELECT TRUNC(10.56) FROM DUAL; --Cuts off to the whole number (no decimal place) when no decimal size is specified
+SELECT TRUNC(10.56,1) FROM DUAL; --Cuts off to one decimal place.
+SELECT TRUNC(10.5634,2) FROM DUAL; --Cuts off to two decimal places. Answer = 10.56
+SELECT TRUNC(19.5634,-1) FROM DUAL; --Cuts off the first number on the left of the decimal point ie 9 becomes 0 making the answer 10.. The rest of the digits become zero SELECT TRUNC(555.493,-2) FROM DUAL; -- Evaluates to 600.
+SELECT TRUNC(870.92,-3) FROM DUAL; --Evaluates to 0  
+
+--MOD
+SELECT MOD (5,2) FROM DUAL; -- Returns 1
+
+*/
+/*
+--DATE FUNCTIONS
+--rr formart 
+--In general if the value is between 50-99 this returns 19xx year
+--Avalue between 0-49 returns a 20xx year
+
+select sysdate from dual
+
+--Date Arithmetic
+--date - number
+select sysdate, sysdate-3, sysdate + 3 from dual --gives date - plus number = date
+--Date -date
+SELECT EMPLOYEE_ID, SYSDATE, HIRE_DATE, SYSDATE- HIRE_DATE, ROUND(SYSDATE- HIRE_DATE) 
+FROM EMPLOYEES; --date - date = number of days
+
+--MONTHS_BETWEEN -- Takes 2 dates as parameters and returs the number of months between them.
+
+SELECT EMPLOYEE_ID, FIRST_NAME, MONTHS_BETWEEN(SYSDATE, HIRE_DATE)
+FROM EMPLOYEES;
+
+The latest date should always be the first parameter otherwise it will return a negative result.
+
+--add_months
+SELECT EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, ADD_MONTHS(SYSDATE,4)
+FROM EMPLOYEES;
+
+--If the number to add is -ve, it deducts the months
+SELECT EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, ADD_MONTHS(SYSDATE,-4)
+FROM EMPLOYEES;
+
+NEXT_DAY (DATE, day) -- U can put day or the day identifier eg 1= sunday
+
+SELECT EMPLOYEE_ID, FIRST_NAME, NEXT_DAY(SYSDATE, 'FRIDAY')
+FROM EMPLOYEES;
+
+-- U can put day or the day identifier eg 1= Monday
+
+SELECT EMPLOYEE_ID, FIRST_NAME, NEXT_DAY(SYSDATE, 'FRIDAY'), NEXT_DAY(SYSDATE, 5)
+FROM EMPLOYEES;
+
+-- Last_day - retrieves last date of the month.
+
+SELECT LAST_DAY(SYSDATE) FROM DUAL;
+
+--ROUND(DATE,'MONTH') --Rounds to the nearest beginning of the month ie, if date is 1-15, results in the first day of the current month
+--If date is 16-31, results to the first day of the next month
+
+--ROUND(DATE,'YEAR') --Rounds to the nearest beginning of the year ie, if month is  1-6, results in the first day of the current year
+--If month is 7-12, results to the first day of the next year.
+
+--TRUNC(HIRE_DATE,'MONTH') -- Results in the first day of the current month despite the date
+--TRUNC(HIRE_DATE,'YEAR') -- Results in the first day of the current year despite the month
+
+SELECT EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, ROUND(HIRE_DATE,'MONTH'), ROUND(HIRE_DATE,'YEAR'), TRUNC(HIRE_DATE,'MONTH'), TRUNC(HIRE_DATE,'YEAR')
+FROM EMPLOYEES;
+
+--NESTED FUNCTIONS
+--Nested functions are evaluated from the deepest level and the result is passed to the next function until the top most function.
+
+SELECT SUBSTR(UPPER(FIRST_NAME),1,3) FROM
+EMPLOYEES;
+
+
+
+.
+--*/
 SELECT EMPLOYEE_ID, FIRST_NAME,LAST_NAME
 FROM EMPLOYEES
 ORDER BY SALARY*1000 desc
@@ -273,6 +453,77 @@ SELECT employee_id, first_name, last_name,salary, department_id
 FROM EMPLOYEES
 where FIRST_NAME = '&&EMPLOYEE_NAME';
 
-SET DEFINE off
+SET DEFINE OFF
 SELECT * FROM DEPARTMENTS
 WHERE DEPARTMENT_NAME LIKE '%&t';
+
+SELECT employee_id,length(first_name),first_name, substr(first_name,1,3),
+substr(first_name,2,4),
+substr(first_name,2) ,--if u dnt specifify the n, it counts to the last value
+substr(first_name,-3) --if m is negative, it counts from the end.
+FROM EMPLOYEES;
+
+SELECT employee_id,first_name,
+instr(first_name,'E'),
+instr(first_name,'e',2), --starts from 2nd position but returns the position of e from the start of the string not from second position
+instr(first_name,'e',5), --starts from 5th position but returns the position of e from the start of the string not from second position
+instr(first_name,'zabe',3,1) --starts from 1st position but returns the position of the SECOND e from the start of the string not from second position
+FROM EMPLOYEES
+--WHERE FIRST_NAME = 'Nanette'
+;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, SALARY, LPAD (SALARY,10,'#'), RPAD(salary,10,'*')
+FROM EMPLOYEES;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, REPLACE(FIRST_NAME,'a', '*'), REPLACE (FIRST_NAME, 'en','#')
+FROM EMPLOYEES;
+
+select 1+1 from SYS.DUAL;
+
+SELECT TRIM (' ' FROM ' Ayebare Ian ') trimmed from DUAL; -- Leading or trailing is not specified, the function trims from both both ends
+
+SELECT TRIM (leading 'A' FROM 'Ayebare Ian ') trimmed from DUAL; -- Trims only from the strart of the string
+
+SELECT TRIM (trailing ' ' FROM ' Ayebare Ian ') trimmed from DUAL; -- If leading or trailing is not specified, the function trims from both both ends
+
+
+SELECT ROUND(10.56,1) FROM DUAL;
+SELECT ROUND(10.5634,2) FROM DUAL; --Rounds off to two decimal places.
+SELECT ROUND(555.493,-2) FROM DUAL; --Evaluates to 600.
+SELECT ROUND(470.92,-3) FROM DUAL; --Evaluates to 0 since 4 is less than 5.
+SELECT TRUNC(10.56) FROM DUAL;
+SELECT TRUNC(10.56,1) FROM DUAL; --Cuts off to one decimal place.
+SELECT TRUNC(19.5634,-1) FROM DUAL; --Cuts off the first number on the left of the decimal point ie 9 becomes 0 making the answer 10.. The rest of the digits become zero 
+SELECT TRUNC(870.92,-3) FROM DUAL; --Evaluates to 0 since 4 is less than 5.
+
+SELECT MOD (5,2) FROM DUAL;
+
+--Date Arithmetic
+--date - number
+select sysdate, sysdate-3, sysdate + 3 from dual --gives date - plus number = date
+--Date -date
+SELECT EMPLOYEE_ID, SYSDATE, HIRE_DATE, SYSDATE- HIRE_DATE, ROUND(SYSDATE- HIRE_DATE) 
+FROM EMPLOYEES; --date - date = number of days
+
+SELECT EMPLOYEE_ID, FIRST_NAME, MONTHS_BETWEEN(SYSDATE, HIRE_DATE)
+FROM EMPLOYEES;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, ADD_MONTHS(SYSDATE,4)
+FROM EMPLOYEES;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, ADD_MONTHS(SYSDATE,-4)
+FROM EMPLOYEES;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, NEXT_DAY(SYSDATE, 'FRIDAY')
+FROM EMPLOYEES;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, NEXT_DAY(SYSDATE, 'FRIDAY'), NEXT_DAY(SYSDATE, 7)
+FROM EMPLOYEES;
+
+SELECT (LAST_DAY(SYSDATE)) FROM DUAL;
+
+SELECT EMPLOYEE_ID, FIRST_NAME, HIRE_DATE, ROUND(HIRE_DATE,'MONTH'), ROUND(HIRE_DATE,'YEAR'), TRUNC(HIRE_DATE,'MONTH'), TRUNC(HIRE_DATE,'YEAR')
+FROM EMPLOYEES;
+
+SELECT FIRST_NAME, SUBSTR(UPPER(FIRST_NAME),1, 3) FROM
+EMPLOYEES;  
